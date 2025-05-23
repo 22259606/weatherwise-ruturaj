@@ -1,0 +1,594 @@
+Visualisation Functions (precipitation)
+Tool - ChatGPT
+Date - 23 MAY
+import matplotlib.pyplot as plt
+
+def create_precipitation_visualisation(weather_data, output_type='display'):
+    """
+    Create a bar chart showing precipitation (rainfall) forecast.
+
+    Args:
+        weather_data (dict): Full weather data from WeatherAPI
+        output_type (str): 'display' to show the plot, 'figure' to return the figure
+
+    Returns:
+        If output_type == 'figure', returns the matplotlib figure object
+        Otherwise, displays the plot.
+    """
+    forecast_days = weather_data.get("forecast", {}).get("forecastday", [])
+
+    # If no forecast data is found
+    if not forecast_days:
+        print("No forecast data available.")
+        return
+
+    # Extract dates and precipitation values
+    dates = [day["date"] for day in forecast_days]
+    precipitation = [day["day"]["totalprecip_mm"] for day in forecast_days]
+
+    # Create bar chart
+    fig, ax = plt.subplots()
+    ax.bar(dates, precipitation, color='royalblue')
+    ax.set_title("📊 Precipitation Forecast for Perth (mm)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Rainfall (mm)")
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    # Show or return
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show() (this code doesn't runs)
+
+ChatGPT said:
+The code looks mostly correct, but the last line:
+
+python
+Copy
+Edit
+plt.show() (this code doesn't runs)
+has a syntax issue — the comment (this code doesn't runs) is placed directly after the function call without a proper comment symbol #. Python thinks you're trying to call plt.show() with an argument, which causes a syntax error.
+
+Fix:
+Replace this line:
+
+python
+Copy
+Edit
+plt.show() (this code doesn't runs)
+with:
+
+python
+Copy
+Edit
+plt.show()  # this code doesn't run
+or just remove the comment if you don't need it.
+
+Full corrected code snippet:
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+
+def create_precipitation_visualisation(weather_data, output_type='display'):
+    """
+    Create a bar chart showing precipitation (rainfall) forecast.
+
+    Args:
+        weather_data (dict): Full weather data from WeatherAPI
+        output_type (str): 'display' to show the plot, 'figure' to return the figure
+
+    Returns:
+        If output_type == 'figure', returns the matplotlib figure object
+        Otherwise, displays the plot.
+    """
+    forecast_days = weather_data.get("forecast", {}).get("forecastday", [])
+
+    # If no forecast data is found
+    if not forecast_days:
+        print("No forecast data available.")
+        return
+
+    # Extract dates and precipitation values
+    dates = [day["date"] for day in forecast_days]
+    precipitation = [day["day"]["totalprecip_mm"] for day in forecast_days]
+
+    # Create bar chart
+    fig, ax = plt.subplots()
+    ax.bar(dates, precipitation, color='royalblue')
+    ax.set_title("📊 Precipitation Forecast for Perth (mm)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Rainfall (mm)")
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    # Show or return
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()  # fixed the comment here
+If you want me to help you test the function with some sample data or if you want improvements, just let me know!
+
+
+
+You said:
+it doesn't works
+
+ChatGPT said:
+Got it! Let’s troubleshoot this step-by-step.
+
+First, can you tell me what exactly "doesn't work" means here?
+
+Are you getting an error? If yes, what error message?
+
+Does the program run but nothing shows up?
+
+Or does it just freeze/hang?
+
+Meanwhile, here are some common issues and fixes for matplotlib plots not displaying:
+
+1. Check your environment
+If you’re running this inside some IDEs or environments like Jupyter notebooks, sometimes you need to run %matplotlib inline or %matplotlib notebook before plotting.
+
+If you’re running a Python script in terminal or command line, plt.show() should work fine.
+
+2. Minimal test example
+Try running this very minimal code snippet to test if matplotlib can show any plot at all in your environment:
+
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+
+plt.plot([1, 2, 3], [4, 5, 6])
+plt.title("Test Plot")
+plt.show()
+If this does not show a plot window or throws an error, then the problem is with your matplotlib installation or environment setup.
+
+3. Running your function with sample data
+Here’s a complete runnable example based on your function but with some dummy weather data:
+
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+
+def create_precipitation_visualisation(weather_data, output_type='display'):
+    forecast_days = weather_data.get("forecast", {}).get("forecastday", [])
+
+    if not forecast_days:
+        print("No forecast data available.")
+        return
+
+    dates = [day["date"] for day in forecast_days]
+    precipitation = [day["day"]["totalprecip_mm"] for day in forecast_days]
+
+    fig, ax = plt.subplots()
+    ax.bar(dates, precipitation, color='royalblue')
+    ax.set_title("📊 Precipitation Forecast for Perth (mm)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Rainfall (mm)")
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+# Sample data:
+sample_weather_data = {
+    "forecast": {
+        "forecastday": [
+            {"date": "2025-05-23", "day": {"totalprecip_mm": 5.2}},
+            {"date": "2025-05-24", "day": {"totalprecip_mm": 3.1}},
+            {"date": "2025-05-25", "day": {"totalprecip_mm": 0.0}},
+            {"date": "2025-05-26", "day": {"totalprecip_mm": 8.3}},
+        ]
+    }
+}
+
+create_precipitation_visualisation(sample_weather_data)
+Try running this exact code and tell me what happens.
+
+4. Matplotlib backend
+If you’re running in a headless environment (like some servers or remote shells), matplotlib might not be able to open a window to show the plot.
+
+You can try switching backend:
+
+python
+Copy
+Edit
+import matplotlib
+matplotlib.use('Agg')  # This backend does not require a display (for saving files only)
+But then you can’t use plt.show() — instead, save the figure:
+
+python
+Copy
+Edit
+fig.savefig('output.png')
+TL;DR:
+Try minimal plt.plot() example.
+
+Try my full sample code above.
+
+Check if there are errors.
+
+Tell me your environment (Jupyter, PyCharm, VSCode, Terminal, etc.).
+
+If you give me that info, I can help you get it working!
+
+
+
+You said:
+i don't want a bar graph
+
+ChatGPT said:
+Gotcha! You don’t want a bar chart for the precipitation forecast. What kind of graph would you prefer instead? Here are some common alternatives for visualizing precipitation over days:
+
+Line plot — great for showing trends over time
+
+Scatter plot — dots showing values on dates
+
+Area plot — line plot with filled area beneath (nice for precipitation)
+
+Step plot — steps between values, showing changes clearly
+
+Example: Changing your function to a line plot
+Here’s your function modified to create a line plot instead of a bar chart:
+
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+
+def create_precipitation_visualisation(weather_data, output_type='display'):
+    forecast_days = weather_data.get("forecast", {}).get("forecastday", [])
+
+    if not forecast_days:
+        print("No forecast data available.")
+        return
+
+    dates = [day["date"] for day in forecast_days]
+    precipitation = [day["day"]["totalprecip_mm"] for day in forecast_days]
+
+    fig, ax = plt.subplots()
+    ax.plot(dates, precipitation, marker='o', color='royalblue', linestyle='-')
+    ax.set_title("📊 Precipitation Forecast for Perth (mm)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Rainfall (mm)")
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+If you want a different plot type, just say which one you prefer or I can help you try area, scatter, or step plot too.
+
+
+
+You said:
+doesn't runs
+
+ChatGPT said:
+Alright, let's get this working! Since you say it “doesn’t run,” let’s try this minimal complete example from scratch and make sure it works in your environment.
+
+Please copy-paste and run this entire snippet exactly as is:
+
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+
+def create_precipitation_visualisation(weather_data, output_type='display'):
+    forecast_days = weather_data.get("forecast", {}).get("forecastday", [])
+    if not forecast_days:
+        print("No forecast data available.")
+        return
+
+    dates = [day["date"] for day in forecast_days]
+    precipitation = [day["day"]["totalprecip_mm"] for day in forecast_days]
+
+    fig, ax = plt.subplots()
+    ax.plot(dates, precipitation, marker='o', color='royalblue', linestyle='-')
+    ax.set_title("📊 Precipitation Forecast for Perth (mm)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Rainfall (mm)")
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+# Sample data for testing
+sample_weather_data = {
+    "forecast": {
+        "forecastday": [
+            {"date": "2025-05-23", "day": {"totalprecip_mm": 5.2}},
+            {"date": "2025-05-24", "day": {"totalprecip_mm": 3.1}},
+            {"date": "2025-05-25", "day": {"totalprecip_mm": 0.0}},
+            {"date": "2025-05-26", "day": {"totalprecip_mm": 8.3}},
+        ]
+    }
+}
+
+# Call the function to show the plot
+create_precipitation_visualisation(sample_weather_data)
+What to do next:
+Run this exactly as-is.
+
+If you get an error, please copy-paste the full error message here.
+
+If the plot window does not open, tell me which environment you’re using:
+
+Are you running this in a terminal?
+
+In an IDE (PyCharm, VSCode)?
+
+In a Jupyter notebook?
+
+In some other environment?
+
+Troubleshooting quick checks:
+If you’re in Jupyter Notebook, try adding at the top before your function:
+
+python
+Copy
+Edit
+%matplotlib inline
+If you’re in a terminal/command line and no plot appears, make sure you have a GUI environment (some servers don't).
+
+If you get errors about matplotlib or missing modules, you might need to install or upgrade matplotlib:
+
+css
+Copy
+Edit
+pip install --upgrade matplotlib
+Send me any error output or environment details and I’ll help you fix it fast!
+
+
+
+You said:
+has a error (SyntaxError: unterminated string literal (detected at line 29))
+
+ChatGPT said:
+Thanks for the error info! A SyntaxError: unterminated string literal means somewhere a string wasn’t closed properly with a matching quote (' or ").
+
+Looking back at the code I gave you, line 29 corresponds to this line in the sample:
+
+python
+Copy
+Edit
+create_precipitation_visualisation(sample_weather_data)
+This line itself is fine, so likely the error is caused by a copy-paste mistake — maybe an open quote somewhere before line 29 or a hidden character?
+
+What to check:
+Make sure all strings have matching quotes.
+
+For example:
+
+python
+Copy
+Edit
+"2025-05-23"   # correct
+'2025-05-23'   # correct
+"2025-05-23    # missing closing quote -> syntax error
+If you copied the code from somewhere with emoji or special chars (like "📊 Precipitation Forecast for Perth (mm)"), sometimes editors mess up encoding. Try replacing that title with a plain string:
+
+python
+Copy
+Edit
+ax.set_title("Precipitation Forecast for Perth (mm)")
+Here is the full minimal example again, without emojis and comments — copy-paste this exact block:
+
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+
+def create_precipitation_visualisation(weather_data, output_type='display'):
+    forecast_days = weather_data.get("forecast", {}).get("forecastday", [])
+    if not forecast_days:
+        print("No forecast data available.")
+        return
+
+    dates = [day["date"] for day in forecast_days]
+    precipitation = [day["day"]["totalprecip_mm"] for day in forecast_days]
+
+    fig, ax = plt.subplots()
+    ax.plot(dates, precipitation, marker='o', color='royalblue', linestyle='-')
+    ax.set_title("Precipitation Forecast for Perth (mm)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Rainfall (mm)")
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+sample_weather_data = {
+    "forecast": {
+        "forecastday": [
+            {"date": "2025-05-23", "day": {"totalprecip_mm": 5.2}},
+            {"date": "2025-05-24", "day": {"totalprecip_mm": 3.1}},
+            {"date": "2025-05-25", "day": {"totalprecip_mm": 0.0}},
+            {"date": "2025-05-26", "day": {"totalprecip_mm": 8.3}}
+        ]
+    }
+}
+
+create_precipitation_visualisation(sample_weather_data)
+Please try running this exactly and tell me if you still get the same error or a different one. If the error persists, please copy-paste the exact code you’re running so I can spot the mistake.
+I'm here to get you this working!
+
+
+
+You said:
+it works but Is there any other way we can change it ?
+
+ChatGPT said:
+Awesome, glad it works now! 🎉
+
+Yes, there are definitely other ways to visualize precipitation data, depending on what story or style you want. Here are some popular alternatives with example code snippets to switch things up:
+
+1. Area Plot
+Nice for showing volume of rain with filled area under the line:
+
+python
+Copy
+Edit
+ax.fill_between(dates, precipitation, color='skyblue', alpha=0.5)
+ax.plot(dates, precipitation, marker='o', color='royalblue')
+Replace the ax.plot(...) part in your function with the two lines above.
+
+2. Scatter Plot
+Just dots on the dates:
+
+python
+Copy
+Edit
+ax.scatter(dates, precipitation, color='royalblue', s=100)  # s = marker size
+3. Step Plot
+Good to emphasize discrete jumps from day to day:
+
+python
+Copy
+Edit
+ax.step(dates, precipitation, where='mid', color='royalblue')
+ax.scatter(dates, precipitation, color='royalblue')
+4. Horizontal Bar Chart
+If you wanted a bar chart but horizontal bars:
+
+python
+Copy
+Edit
+ax.barh(dates, precipitation, color='royalblue')
+ax.set_xlabel("Rainfall (mm)")
+ax.set_ylabel("Date")
+5. Adding Trendline (Linear Regression)
+If you want to show whether rain is increasing or decreasing:
+
+python
+Copy
+Edit
+import numpy as np
+
+x = np.arange(len(dates))
+y = np.array(precipitation)
+
+coeffs = np.polyfit(x, y, 1)  # linear fit
+trend = np.poly1d(coeffs)
+
+ax.plot(dates, trend(x), color='red', linestyle='--', label='Trend')
+ax.legend()
+Would you like me to update your function with one of these?
+Or do you want a completely different style or a different library (like Seaborn or Plotly) for interactive plots?
+
+Just say the word!
+
+
+
+You said:
+* Can we have a better view on the any code here ?
+
+ChatGPT said:
+Definitely! Let me help you make the plot cleaner and more visually appealing using the area plot with some style tweaks — clearer colors, labels, grid, and nicer date formatting.
+
+Here’s a polished version of your function with an area plot and improved aesthetics:
+
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
+
+def create_precipitation_visualisation(weather_data, output_type='display'):
+    forecast_days = weather_data.get("forecast", {}).get("forecastday", [])
+    if not forecast_days:
+        print("No forecast data available.")
+        return
+
+    # Parse dates as datetime objects for better formatting
+    dates_str = [day["date"] for day in forecast_days]
+    dates = [datetime.strptime(d, "%Y-%m-%d") for d in dates_str]
+    precipitation = [day["day"]["totalprecip_mm"] for day in forecast_days]
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    
+    # Area plot with fill and line
+    ax.fill_between(dates, precipitation, color='skyblue', alpha=0.5)
+    ax.plot(dates, precipitation, marker='o', color='royalblue', linewidth=2)
+
+    # Titles and labels
+    ax.set_title("Precipitation Forecast for Perth (mm)", fontsize=16, weight='bold')
+    ax.set_xlabel("Date", fontsize=12)
+    ax.set_ylabel("Rainfall (mm)", fontsize=12)
+
+    # Grid and spines
+    ax.grid(True, linestyle='--', alpha=0.6)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    # Format x-axis dates nicely
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))  # e.g. May 23
+    ax.xaxis.set_major_locator(mdates.DayLocator())
+
+    fig.autofmt_xdate(rotation=45)
+
+    plt.tight_layout()
+
+    if output_type == 'figure':
+        return fig
+    else:
+        plt.show()
+Why is this better?
+Dates parsed to datetime so matplotlib can space them correctly and format nicely.
+
+Area fill + line gives a smooth, intuitive visual of rainfall amount.
+
+Larger figure size for better readability.
+
+Bold title and axis labels improve clarity.
+
+Grid lines and hidden top/right spines make the plot cleaner.
+
+Formatted dates on x-axis are easier to read.
+
+Try this with the same sample data:
+python
+Copy
+Edit
+sample_weather_data = {
+    "forecast": {
+        "forecastday": [
+            {"date": "2025-05-23", "day": {"totalprecip_mm": 5.2}},
+            {"date": "2025-05-24", "day": {"totalprecip_mm": 3.1}},
+            {"date": "2025-05-25", "day": {"totalprecip_mm": 0.0}},
+            {"date": "2025-05-26", "day": {"totalprecip_mm": 8.3}},
+        ]
+    }
+}
+
+create_precipitation_visualisation(sample_weather_data)
+If you want, I can also help you:
+
+Add tooltips or interactivity (with Plotly)
+
+Make it dark mode
+
+Export to image/pdf or integrate in a web app
+
+Just let me know!
